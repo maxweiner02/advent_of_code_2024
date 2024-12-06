@@ -34,8 +34,7 @@ main :: proc() {
 
 	left_array: [dynamic]string
 	right_array: [dynamic]string
-	total: i32
-
+	total: int
 
 	data, ok := os.read_entire_file("data.txt", context.allocator)
 
@@ -50,30 +49,25 @@ main :: proc() {
 		temp_arr: []string = strings.split(line, "   ")
 		append(&left_array, temp_arr[0])
 		append(&right_array, temp_arr[1])
-		delete(temp_arr)
+		defer delete(temp_arr)
 	}
 
-	// slice.sort(left_array[:])
-	// slice.sort(right_array[:])
+	slice.stable_sort(left_array[:])
+	slice.stable_sort(right_array[:])
 
 	if len(left_array) != len(right_array) {
 		fmt.eprint("Columns are not of same length")
 		return
 	}
 
-	// for num, index in left_array {
+	for val, index in left_array {
+		dif := strconv.atoi(left_array[index]) - strconv.atoi(right_array[index])
+		abs_dif := abs(dif)
 
-	// }
-	for rune in left_array[0] {
-
+		total += abs_dif
 	}
 
-	//this works :)
-	test1 := strconv.atoi(left_array[0])
-	test2 := strconv.atoi(right_array[0])
-	test3 := test1 - test2
-
-	fmt.print(test3)
+	fmt.print(total)
 	delete(left_array)
 	delete(right_array)
 }
