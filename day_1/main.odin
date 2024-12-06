@@ -52,12 +52,20 @@ main :: proc() {
 		defer delete(temp_arr)
 	}
 
+	fmt.print(sorted_sum(&left_array, &right_array))
+
+
+	delete(left_array)
+	delete(right_array)
+}
+
+sorted_sum :: proc(left_array: ^[dynamic]string, right_array: ^[dynamic]string) -> (total: int) {
 	slice.stable_sort(left_array[:])
 	slice.stable_sort(right_array[:])
 
 	if len(left_array) != len(right_array) {
 		fmt.eprint("Columns are not of same length")
-		return
+		return -1
 	}
 
 	for val, index in left_array {
@@ -67,7 +75,5 @@ main :: proc() {
 		total += abs_dif
 	}
 
-	fmt.print(total)
-	delete(left_array)
-	delete(right_array)
+	return
 }
