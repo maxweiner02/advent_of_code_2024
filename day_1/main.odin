@@ -64,7 +64,7 @@ sorted_sum :: proc(left_array: ^[dynamic]string, right_array: ^[dynamic]string) 
 	slice.stable_sort(right_array[:])
 
 	if len(left_array) != len(right_array) {
-		fmt.eprint("Columns are not of same length")
+		fmt.eprint("Columns are not of same length\n")
 		return -1
 	}
 
