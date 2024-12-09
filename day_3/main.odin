@@ -3,6 +3,7 @@ package day_3
 import "core:fmt"
 import "core:mem"
 import "core:os"
+import "core:text/regex"
 
 main :: proc() {
 	//Standard Debug Allocator delcaration
@@ -29,5 +30,15 @@ main :: proc() {
 		}
 	}
 
+	data, ok := os.read_entire_file("data.txt")
 
+	if !ok {
+		fmt.eprint("ERROR: Could not read file")
+		return
+	}
+	defer delete(data)
+
+	for rune in data {
+		fmt.print(rune)
+	}
 }
