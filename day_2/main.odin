@@ -1,4 +1,4 @@
-package main
+package day_2
 
 import "core:fmt"
 import "core:mem"
@@ -104,8 +104,11 @@ lax_is_line_safe :: proc(line: []string) -> bool {
 		return true
 	}
 
+
 	for i in 0 ..< len(line) {
-		if is_line_safe(line[..i] ++ line[i+1..]) {
+		dynamic_copy := slice.clone_to_dynamic(line)
+		ordered_remove(&dynamic_copy, i)
+		if is_line_safe(dynamic_copy[:]) {
 			return true
 		}
 	}
