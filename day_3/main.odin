@@ -42,8 +42,10 @@ main :: proc() {
 	}
 
 	file_string := string(data)
+	can_do := true
 
 	fmt.println(calculate_total(file_string))
+	fmt.println(can_do_calculate_total(file_string))
 }
 
 calculate_total :: proc(file_string: string) -> (total: int) {
@@ -92,6 +94,74 @@ calculate_total :: proc(file_string: string) -> (total: int) {
 								)
 							}
 						}
+					}
+				}
+			}
+		}
+		total += int_1 * int_2
+		clear(&num_1)
+		clear(&num_2)
+	}
+
+	return
+}
+
+can_do_calculate_total :: proc(file_string: string) -> (total: int) {
+	can_do := true
+
+	num_1: [dynamic]rune
+	defer delete(num_1)
+
+	num_2: [dynamic]rune
+	defer delete(num_2)
+
+	for char, index in file_string {
+		int_1: int
+		int_2: int
+		cur_index := index
+		if char == 'm' {
+			if file_string[cur_index + 1] == 'u' {
+				if file_string[cur_index + 2] == 'l' {
+					if file_string[cur_index + 3] == '(' {
+						cur_index += 4
+						for subchar in file_string[cur_index:] {
+							if unicode.is_digit(subchar) {
+								append(&num_1, subchar)
+								cur_index += 1
+							} else {
+								break
+							}
+						}
+						// This comes after we have stopped at the end of num_1 and/or broken out
+						if file_string[cur_index] == ',' {
+							int_1 = strconv.atoi(
+								utf8.runes_to_string(num_1[:], context.temp_allocator),
+							)
+							cur_index += 1
+							for subchar in file_string[cur_index:] {
+								if unicode.is_digit(subchar) {
+									append(&num_2, subchar)
+									cur_index += 1
+								} else {
+									break
+								}
+							}
+
+							// This comes after we have stopped at the end of num_2 and/or broken out
+							if file_string[cur_index] == ')' {
+								int_2 = strconv.atoi(
+									utf8.runes_to_string(num_2[:], context.temp_allocator),
+								)
+							}
+						}
+					}
+				}
+			}
+		} else if char == 'd' {
+			if file_string[cur_index + 1] == 'o' {
+				if file_string[cur_index + 2] == '(' {
+					if file_string[cur_index + 3] == ')' {
+						can_do = true
 					}
 				}
 			}
