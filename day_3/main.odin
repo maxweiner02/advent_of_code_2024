@@ -1,12 +1,15 @@
 package day_3
 
 import "core:fmt"
+import "core:io"
 import "core:mem"
 import "core:os"
-import "core:text/regex"
+import "core:strconv"
+import "core:unicode"
+import "core:unicode/utf8"
 
 main :: proc() {
-	//Standard Debug Allocator delcaration
+	//Standard Debug Allocator declaration
 	//src: https://gist.github.com/karl-zylinski/4ccf438337123e7c8994df3b03604e33
 	when ODIN_DEBUG {
 		track: mem.Tracking_Allocator
@@ -31,14 +34,72 @@ main :: proc() {
 	}
 
 	data, ok := os.read_entire_file("data.txt")
+	defer delete(data)
 
 	if !ok {
 		fmt.eprint("ERROR: Could not read file")
 		return
 	}
-	defer delete(data)
 
-	for rune in data {
-		fmt.print(rune)
+	file_string := string(data)
+
+	fmt.println(calculate_total(file_string))
+}
+
+calculate_total :: proc(file_string: string) -> (total: int) {
+	num_1: [dynamic]rune
+	defer delete(num_1)
+
+	num_2: [dynamic]rune
+	defer delete(num_2)
+
+	for char, index in file_string {
+		int_1: int
+		int_2: int
+		cur_index := index
+		if char == 'm' {
+			if file_string[cur_index + 1] == 'u' {
+				if file_string[cur_index + 2] == 'l' {
+					if file_string[cur_index + 3] == '(' {
+						cur_index += 4
+						for subchar in file_string[cur_index:] {
+							if unicode.is_digit(subchar) {
+								append(&num_1, subchar)
+								cur_index += 1
+							} else {
+								break
+							}
+						}
+						// This comes after we have stopped at the end of num_1 and/or broken out
+						if file_string[cur_index] == ',' {
+							int_1 = strconv.atoi(
+								utf8.runes_to_string(num_1[:], context.temp_allocator),
+							)
+							cur_index += 1
+							for subchar in file_string[cur_index:] {
+								if unicode.is_digit(subchar) {
+									append(&num_2, subchar)
+									cur_index += 1
+								} else {
+									break
+								}
+							}
+
+							// This comes after we have stopped at the end of num_2 and/or broken out
+							if file_string[cur_index] == ')' {
+								int_2 = strconv.atoi(
+									utf8.runes_to_string(num_2[:], context.temp_allocator),
+								)
+							}
+						}
+					}
+				}
+			}
+		}
+		total += int_1 * int_2
+		clear(&num_1)
+		clear(&num_2)
 	}
+
+	return
 }
