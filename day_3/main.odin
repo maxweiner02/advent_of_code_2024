@@ -157,16 +157,27 @@ can_do_calculate_total :: proc(file_string: string) -> (total: int) {
 					}
 				}
 			}
+			//This is the most brute force way to accomplish this
 		} else if char == 'd' {
 			if file_string[cur_index + 1] == 'o' {
 				if file_string[cur_index + 2] == '(' {
 					if file_string[cur_index + 3] == ')' {
 						can_do = true
 					}
+				} else if file_string[cur_index + 2] == 'n' {
+					if file_string[cur_index + 3] == '\'' {
+						if file_string[cur_index + 4] == 't' {
+							if file_string[cur_index + 5] == '(' {
+								if file_string[cur_index + 6] == ')' {
+									can_do = false
+								}
+							}
+						}
+					}
 				}
 			}
 		}
-		total += int_1 * int_2
+		total += int_1 * int_2 if can_do else 0
 		clear(&num_1)
 		clear(&num_2)
 	}
