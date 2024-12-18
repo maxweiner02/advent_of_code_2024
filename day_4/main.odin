@@ -111,7 +111,6 @@ searchWord :: proc(grid: [][]rune, word: string) -> int {
 	return result
 }
 
-
 /*
 - returns a boolean because each location can only have one valid value
 - hardcoded for MAS; but could be refactored to take any odd length string
