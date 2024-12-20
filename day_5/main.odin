@@ -97,7 +97,6 @@ main :: proc() {
 			middle_value := strconv.atoi(pages[middle_index])
 			total += middle_value
 		} else {
-			// Reorder the bad sequence
 			reordered_sequence := reorder_sequence(pages, rules)
 			middle_index := len(reordered_sequence) / 2
 			middle_value := reordered_sequence[middle_index]
@@ -109,7 +108,6 @@ main :: proc() {
 	fmt.println(invalid_total)
 }
 
-//works on sample but not big data
 reorder_sequence :: proc(sequence: []string, rules: map[int][dynamic]int) -> []int {
 	num_sequence: [dynamic]int
 	for str in sequence do append(&num_sequence, strconv.atoi(str))
@@ -119,23 +117,17 @@ reorder_sequence :: proc(sequence: []string, rules: map[int][dynamic]int) -> []i
 	copy(ordered_sequence, num_sequence[:])
 	defer delete(ordered_sequence)
 
-	for key, elems in rules {
-		for elem in elems {
-			key_index := -1
-			elem_index := -1
-			for num, i in ordered_sequence {
-				if num == key {
-					key_index = i
-				} else if num == elem {
-					elem_index = i
+	for i in 0 ..< len(ordered_sequence) {
+		for j in i + 1 ..< len(ordered_sequence) {
+			for key, elems in rules {
+				if ordered_sequence[i] == key {
+					for elem in elems {
+						if ordered_sequence[j] == elem {
+							ordered_sequence[i], ordered_sequence[j] =
+								ordered_sequence[j], ordered_sequence[i]
+						}
+					}
 				}
-				if key_index != -1 && elem_index != -1 {
-					break
-				}
-			}
-			if key_index != -1 && elem_index != -1 && key_index > elem_index {
-				ordered_sequence[key_index], ordered_sequence[elem_index] =
-					ordered_sequence[elem_index], ordered_sequence[key_index]
 			}
 		}
 	}
